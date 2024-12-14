@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela de usuários
+enum UserRole {
+  customer
+  sales
+}
+
+model User {
+  id         String     @id @default(uuid())
+  name       String
+  email      String
+  password   String
+  role       UserRole   @default(customer)
+  deliveries Delivery[] // PK: relacionamento com Delivery.userId ([] pq podem ser mtas entregas por user)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime?  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// Tabela de entregas
+enum DeliveryStatus {
+  processing
+  shipped
+  delivered
+}
+
+model Delivery {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  description String
+  status      DeliveryStatus @default(processing)
+  user        User           @relation(fields: [userId], references: [id]) // FK: relacionamento com User.id
+  logs        DeliveryLog[] // PK: relacionamento com DeliveryLogs.deliveryId ([] pq podem ser mtos logs por entrega)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime?      @updatedAt @map("updated_at")
+
+  @@map("deliveries")
+}
+
+// Tabela de logs de entregas
+model DeliveryLog {
+  id          String    @id @default(uuid())
+  description String
+  deliveryId  String    @map("delivery_id")
+  delivery    Delivery  @relation(fields: [deliveryId], references: [id]) // FK: relacionameno com Delivery.id
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+
+  @@map("delivery_logs")
+}
