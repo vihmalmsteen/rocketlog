@@ -13,6 +13,6 @@ npx prisma studio
 ![alt text](./pics/estrutura-do-db.png)
 
 
-<a href="https://vercel.com/">
+<a href="https://vercel.com/" target="_blank">
 <img alt="Static Badge" src="https://img.shields.io/badge/VERCEL%20API%20DEPLOY-DAF7A6?logo=vercel&logoColor=black">
 </a>
